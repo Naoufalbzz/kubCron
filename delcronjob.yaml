@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: delete-cronjob
 spec:
-  schedule: "0 * * * *"  
+  schedule: "0 2 * * *"  
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 3600  

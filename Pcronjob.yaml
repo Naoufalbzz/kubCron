@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: backup-psql-cronjob
 spec:
-  schedule: "0 * * * *"  
+  schedule: "0 2 * * *"  
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 3600  

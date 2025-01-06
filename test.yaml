@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: backup-mysql-cronjob2
 spec:
-  schedule: "0 * * * *"  # This can be set to any schedule, but it won't matter for testing purposes.
+  schedule: "0 2 * * *"  # This can be set to any schedule, but it won't matter for testing purposes.
   jobTemplate:
     spec:
       template:

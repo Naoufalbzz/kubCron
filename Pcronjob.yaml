@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-psql-cronjob
+spec:
+  schedule: "0 * * * *"  
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600  
+      template:
+        spec:
+          containers:
+          - name: backup-mysql-container
+            image: bouzewazi/ubu4
+            command: 
+              - "python3"
+              - "/backup_script.py"
+              - "-dn"
+              - "testdb"
+              - "-du"
+              - "root"
+              - "-t"
+              - "PSQL"
+              - "-b"
+              - "-bd"
+              - "/data"
+            volumeMounts:
+              - name: backup-storage
+                mountPath: /data  
+            env:
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: DB_PASSWORD
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret2
+                    key: PGPASSWORD
+
+            resources:
+              requests:
+                memory: "1Gi"  
+                cpu: "250m"      
+              limits:
+                memory: "2Gi"  
+                cpu: "500m"      
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc

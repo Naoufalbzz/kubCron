@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backup-pod
+spec:
+  containers:
+  - name: backup-container
+    image: bouzewazi/my-python-image
+    command:
+      - sleep
+      - "3600" 
+    volumeMounts:
+    - name: backup-storage
+      mountPath: /src/backups
+  volumes:
+  - name: backup-storage
+    persistentVolumeClaim:
+      claimName: backup-pvc

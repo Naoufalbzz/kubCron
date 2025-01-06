@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-mysql-cronjob2
+spec:
+  schedule: "0 * * * *"  # This can be set to any schedule, but it won't matter for testing purposes.
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup-mysql-container
+            image: bouzewazi/ubu4
+            command: 
+              - "tail"
+              - "-f"
+              - "/dev/null"  # Keeps the container running indefinitely
+            volumeMounts:
+              - name: backup-storage
+                mountPath: /data  # Mounts the volume to this path inside the container
+            env:
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: DB_PASSWORD
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret2
+                    key: PGPASSWORD
+            resources:
+              requests:
+                memory: "1Gi"  
+                cpu: "250m"      
+              limits:
+                memory: "2Gi"  
+                cpu: "500m"      
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: backup-pvc  # Reference the PVC
+          restartPolicy: Never
